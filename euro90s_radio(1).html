@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euro90s Radio | Y2K Edition</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-cyan': '#00ffff',
+                        'neon-magenta': '#ff00ff',
+                        'neon-lime': '#39ff14',
+                        'y2k-dark': '#0a0a2a',
+                        'y2k-panel': '#1a1a4a',
+                    },
+                    fontFamily: {
+                        'pixel': ['"Press Start 2P"', 'cursive'],
+                        'vt323': ['"VT323"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #000;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Neon Text Glow */
+        .glow-cyan { text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff; }
+        .glow-magenta { text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+        
+        /* Winamp style panel */
+        .y2k-panel {
+            background: linear-gradient(135deg, #1a1a4a 0%, #050515 100%);
+            border: 3px solid #444;
+            border-top-color: #888;
+            border-left-color: #888;
+            box-shadow: 10px 10px 0px rgba(255, 0, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        /* Glossy Y2K Button */
+        .y2k-btn {
+            background: linear-gradient(180deg, #ff00ff 0%, #800080 100%);
+            border: 2px solid #ff66ff;
+            border-bottom-color: #4d004d;
+            border-right-color: #4d004d;
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.6);
+            transition: all 0.1s;
+        }
+        .y2k-btn:active {
+            border: 2px solid #4d004d;
+            border-bottom-color: #ff66ff;
+            border-right-color: #ff66ff;
+            background: linear-gradient(180deg, #800080 0%, #ff00ff 100%);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
+            transform: scale(0.98);
+        }
+
+        /* LCD Screen */
+        .lcd-screen {
+            background-color: #002200;
+            border: 3px inset #333;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 10px;
+            background: #00ffff;
+            border: 1px solid #fff;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 5px #00ffff;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #333;
+            border: 1px inset #666;
+        }
+
+        /* Visualizer Animation */
+        .visualizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 50px;
+            padding: 5px;
+        }
+        .bar {
+            width: 12px;
+            background: linear-gradient(0deg, #39ff14, #ff00ff);
+            height: 5%;
+            transition: height 0.1s;
+            box-shadow: 0 0 5px #39ff14;
+        }
+        
+        .is-playing .bar {
+            animation: equalize 0.8s infinite alternate;
+        }
+        
+        @keyframes equalize {
+            0% { height: 10%; }
+            100% { height: 100%; }
+        }
+
+        /* Randomize animation delays for visualizer bars */
+        .bar:nth-child(1) { animation-delay: -0.4s; animation-duration: 0.6s; }
+        .bar:nth-child(2) { animation-delay: -0.2s; animation-duration: 0.7s; }
+        .bar:nth-child(3) { animation-delay: -0.6s; animation-duration: 0.5s; }
+        .bar:nth-child(4) { animation-delay: -0.1s; animation-duration: 0.8s; }
+        .bar:nth-child(5) { animation-delay: -0.8s; animation-duration: 0.6s; }
+        .bar:nth-child(6) { animation-delay: -0.3s; animation-duration: 0.7s; }
+        .bar:nth-child(7) { animation-delay: -0.5s; animation-duration: 0.5s; }
+        .bar:nth-child(8) { animation-delay: -0.7s; animation-duration: 0.6s; }
+        
+        /* Sparkle effect */
+        .sparkle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(1); }
+            100% { opacity: 1; transform: scale(2); box-shadow: 0 0 10px #fff; }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4 font-vt323 text-xl">
+
+    <!-- Starfield container via JS injected divs -->
+    <div id="stars" class="fixed inset-0 pointer-events-none z-[-1]"></div>
+
+    <!-- Main Player Container -->
+    <main class="y2k-panel w-full max-w-lg mx-auto p-6 flex flex-col gap-6 relative z-10">
+        
+        <!-- Header -->
+        <header class="text-center space-y-2">
+            <h1 class="font-pixel text-3xl md:text-5xl text-neon-cyan glow-cyan tracking-widest mt-2 uppercase">Euro90s</h1>
+            <h2 class="text-neon-magenta text-2xl tracking-widest uppercase">The Ultimate Millennium Ride</h2>
+        </header>
+
+        <!-- LCD Display -->
+        <div class="lcd-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
+            <!-- Glitch scanline overlay -->
+            <div class="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none z-10"></div>
+            
+            <div class="w-full text-neon-lime text-2xl mb-2 flex justify-between px-2">
+                <span>STATE: <span id="status-text">STOPPED</span></span>
+                <span>KBPS: 128</span>
+            </div>
+
+            <!-- Marquee Tag (Vintage Y2K style) -->
+            <marquee class="font-pixel text-sm text-neon-cyan py-2 w-full bg-black/50 border border-neon-cyan" scrollamount="5">
+                *** NYNÍ HRAJE: EURODANCE - TRANCE - TECHNO - DANCE *** VÍTEJTE V ROCE 1999 *** 
+            </marquee>
+
+            <!-- Visualizer -->
+            <div id="visualizer" class="visualizer mt-4 w-full justify-center">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-black/30 p-4 border border-gray-700">
+            
+            <div class="flex gap-4">
+                <!-- Play Button -->
+                <button id="play-btn" class="y2k-btn font-pixel text-white px-6 py-4 text-xs md:text-sm uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    Play
+                </button>
+                
+                <!-- Stop Button -->
+                <button id="stop-btn" class="y2k-btn font-pixel text-white px-6 py-4 text-xs md:text-sm uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+                    Stop
+                </button>
+            </div>
+
+            <!-- Volume Control -->
+            <div class="w-full sm:w-1/2 flex flex-col items-center">
+                <label for="volume" class="text-neon-cyan font-pixel text-xs mb-2">Volume / Hlasitost</label>
+                <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+            </div>
+        </div>
+
+        <!-- Audio Element (Hidden) -->
+        <audio id="radio-stream" preload="none">
+            <source src="https://euro90s.ipirate.sk/" type="audio/mpeg">
+            Váš prohlížeč nepodporuje audio element.
+        </audio>
+
+        <!-- Footer / Contact -->
+        <footer class="mt-4 border-t-2 border-dashed border-gray-600 pt-4 text-center">
+            <p class="text-gray-300 text-lg">
+                Žádosti o písničky a kontakt:<br>
+                <a href="mailto:euroridefm@email.cz" class="text-neon-cyan hover:text-neon-magenta hover:underline transition-colors glow-cyan font-bold text-2xl">euroridefm@email.cz</a>
+            </p>
+            <div class="mt-4 flex justify-center gap-2">
+                <!-- Fake vintage badges -->
+                <div class="border border-white bg-blue-800 text-white text-[10px] px-1 font-sans">Best viewed in<br>Netscape</div>
+                <div class="border border-white bg-orange-600 text-white text-[10px] px-1 font-sans">HTML 4.0<br>Valid</div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = document.getElementById('radio-stream');
+            const playBtn = document.getElementById('play-btn');
+            const stopBtn = document.getElementById('stop-btn');
+            const volumeSlider = document.getElementById('volume');
+            const visualizer = document.getElementById('visualizer');
+            const statusText = document.getElementById('status-text');
+
+            // Set initial volume
+            audio.volume = volumeSlider.value;
+
+            // Play Logic
+            playBtn.addEventListener('click', () => {
+                // Set the stream URL directly if it was cleared
+                if(!audio.getAttribute('src')) {
+                    audio.setAttribute('src', 'https://euro90s.ipirate.sk/');
+                }
+
+                audio.play().then(() => {
+                    visualizer.classList.add('is-playing');
+                    statusText.textContent = 'PLAYING...';
+                    statusText.classList.remove('text-neon-lime');
+                    statusText.classList.add('text-neon-cyan', 'glow-cyan');
+                }).catch((e) => {
+                    console.error("Audio playback failed:", e);
+                    statusText.textContent = 'ERROR';
+                });
+            });
+
+            // Stop Logic
+            stopBtn.addEventListener('click', () => {
+                audio.pause();
+                audio.removeAttribute('src'); // Clear source to drop the connection
+                audio.load(); // Reset audio element
+                visualizer.classList.remove('is-playing');
+                statusText.textContent = 'STOPPED';
+                statusText.classList.add('text-neon-lime');
+                statusText.classList.remove('text-neon-cyan', 'glow-cyan');
+            });
+
+            // Volume Logic
+            volumeSlider.addEventListener('input', (e) => {
+                audio.volume = e.target.value;
+            });
+
+            // Background sparkle generator
+            const starsContainer = document.getElementById('stars');
+            for(let i = 0; i < 50; i++) {
+                let star = document.createElement('div');
+                star.className = 'sparkle';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.animationDelay = (Math.random() * 2) + 's';
+                starsContainer.appendChild(star);
+            }
+        });
+    </script>
+</body>
+</html>
